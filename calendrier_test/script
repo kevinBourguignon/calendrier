@@ -1,0 +1,78 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // Écouteur d'événement pour soumettre le formulaire de réservation
+    document.getElementById("reservation-form").addEventListener("submit", function(event) {
+        event.preventDefault(); // Empêche l'envoi du formulaire par défaut
+
+        // Récupérer les données du formulaire
+        var formData = new FormData(this);
+
+        // Envoyer les données du formulaire au serveur via AJAX
+        fetch("reservations.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Une erreur s'est produite lors de la réservation.");
+            }
+            return response.text();
+        })
+        .then(data => {
+            alert(data); // Afficher un message de confirmation
+            this.reset(); // Réinitialiser le formulaire
+            fetchReservations(); // Mettre à jour l'affichage des rendez-vous réservés
+        })
+        .catch(error => {
+            console.error("Erreur:", error);
+            alert("Une erreur s'est produite lors de la réservation.");
+        });
+    });
+
+    // Fonction pour récupérer et afficher les rendez-vous réservés
+    function fetchReservations() {
+        fetch("reservations.php")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Une erreur s'est produite lors de la récupération des rendez-vous réservés.");
+            }
+            return response.text();
+        })
+        .then(data => {
+            document.getElementById("reservation-list").innerHTML = data; // Mettre à jour l'affichage des rendez-vous réservés
+        })
+        .catch(error => {
+            console.error("Erreur:", error);
+            alert("Une erreur s'est produite lors de la récupération des rendez-vous réservés.");
+        });
+    }
+
+    // Appel initial pour afficher les rendez-vous réservés
+    fetchReservations();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+  
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      // Configuration du calendrier
+      initialView: 'dayGridMonth',
+      // Ajoutez d'autres options selon vos besoins
+    });
+  
+    calendar.render();
+  });
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+  
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      // Configuration du calendrier
+      initialView: 'dayGridMonth',
+      // Méthode pour récupérer les événements depuis votre serveur
+      events: 'get_reservations.php' // URL de votre script PHP pour récupérer les réservations
+      // Ajoutez d'autres options selon vos besoins
+    });
+  
+    calendar.render();
+  });
+  
